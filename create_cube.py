@@ -9,7 +9,7 @@ from PIL import Image
 
 
 # color data
-tex = Image.open('/home/jackhasakeyboard/py/mc/diamond_ore.png')
+tex = Image.open('/home/jackhasakeyboard/py/mc/blocks/diamond_ore.png')
     
 val = []
 floor = 255
