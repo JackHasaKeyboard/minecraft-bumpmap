@@ -32,12 +32,11 @@ def create_plane(i):
 
 
     # apply material
-    mat = bpy.data.materials.get('diamond_ore')   
-    ob.data.materials.append(mat)
-
     bpy.ops.mesh.uv_texture_add() # unwraps, seams are irrelevant for square texture
 
     bpy.ops.object.mode_set(mode = 'EDIT')
+
+    bpy.data.screens['UV Editing'].areas[1].spaces[0].image = bpy.data.images['diamond_ore.png'] # texture must be applied in edit mode
 
     bpy.ops.mesh.subdivide(number_cuts = 15)
 
