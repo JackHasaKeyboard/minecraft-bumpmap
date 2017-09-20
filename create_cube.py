@@ -162,7 +162,7 @@ def create_inner():
         create_inner_plane(_)
         
     
-    # ring
+    # ring, doesn't need to be rotated. Oriented right way by default
     # init
     bpy.ops.mesh.primitive_grid_add(x_subdivisions = 17, y_subdivisions = 17, radius = 8, location = (0, 0, -16))
 
@@ -197,6 +197,48 @@ def create_inner():
     
     for vert in bm.verts:
         if vert.co.x > -6 and vert.co.x < 6 and vert.co.y > -6 and vert.co.y < 6:
+            inner.append(vert)
+
+    bmesh.ops.delete(bm, geom = inner[:], context = 1)
+    
+    bm.to_mesh(me)
+    
+    
+    # roof
+    # init
+    bpy.ops.mesh.primitive_grid_add(x_subdivisions = 17, y_subdivisions = 17, radius = 8, location = (0, 0, -2))
+
+    ob = bpy.context.object 
+    me = ob.data
+
+    bm = bmesh.new()
+    bm.from_mesh(me)
+    
+    # apply material
+    bpy.ops.object.mode_set(mode = 'EDIT')
+
+    bpy.ops.uv.unwrap()
+    bpy.data.screens['UV Editing'].areas[1].spaces[0].image = bpy.data.images['diamond_ore.png'] # texture must be applied in edit mode
+       
+    # rotate, currently off kilter by 90 deg
+    prev_area = bpy.context.area.type
+    bpy.context.area.type = 'IMAGE_EDITOR'
+
+    bpy.ops.transform.rotate(value = radians(90))
+
+    bpy.context.area.type = prev_area
+
+    bpy.ops.object.mode_set(mode = 'OBJECT')
+    
+
+    # remove
+    bm = bmesh.new()
+    bm.from_mesh(me)
+    
+    inner = []
+    
+    for vert in bm.verts:
+        if not(vert.co.x > -7 and vert.co.x < 7 and vert.co.y > -7 and vert.co.y < 7):
             inner.append(vert)
 
     bmesh.ops.delete(bm, geom = inner[:], context = 1)
