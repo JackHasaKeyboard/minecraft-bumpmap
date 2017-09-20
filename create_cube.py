@@ -25,7 +25,7 @@ def create_plane(i):
     # init
     bpy.ops.mesh.primitive_grid_add(x_subdivisions = 17, y_subdivisions = 17, radius = 8, location = (0, 0, 0))
 
-    ob = bpy.context.object 
+    ob = bpy.context.object
     me = ob.data
 
     bpy.ops.object.mode_set(mode = 'EDIT')
@@ -84,25 +84,125 @@ def create_plane(i):
 def create_cube():
     for i in range(5):
         create_plane(i)
-      
-      
-    # thickness
-    bpy.ops.mesh.primitive_cube_add(location = (0, 0, -8), radius = 8)
+        
 
+def create_inner_plane(i):
+    # init
+    bpy.ops.mesh.primitive_grid_add(x_subdivisions = 17, y_subdivisions = 17, radius = 8, location = (0, 0, 0))
+
+    ob = bpy.context.object 
+    me = ob.data
+
+    bm = bmesh.new()
+    bm.from_mesh(me)
+
+
+    # apply material
     bpy.ops.object.mode_set(mode = 'EDIT')
 
-    inner = bpy.context.edit_object
-    data = inner.data
+    bpy.ops.uv.unwrap()
+    bpy.data.screens['UV Editing'].areas[1].spaces[0].image = bpy.data.images['diamond_ore.png'] # texture must be applied in edit mode
+       
+    # rotate, currently off kilter by 90 deg
+    prev_area = bpy.context.area.type
+    bpy.context.area.type = 'IMAGE_EDITOR'
 
-    bm = bmesh.from_edit_mesh(data)
+    bpy.ops.transform.rotate(value = radians(90))
 
-    bmesh.ops.delete(bm, geom = bm.faces[4:5], context = 5)  
+    bpy.context.area.type = prev_area
 
-    bmesh.update_edit_mesh(data, True)
+    bpy.ops.object.mode_set(mode = 'OBJECT')
 
-    bpy.ops.object.modifier_add(type = 'SOLIDIFY')
-    bpy.context.object.modifiers['Solidify'].thickness = 2
-    bpy.context.object.modifiers['Solidify'].use_even_offset = True
+    ob = bpy.context.object 
+    me = ob.data
+
+    
+    # remove
+    bm = bmesh.new()
+    bm.from_mesh(me)
+
+    outer = []
+        
+    for vert in bm.verts:
+        if not(vert.co.x > -9 and vert.co.x < 7 and vert.co.y > -7 and vert.co.y < 7):
+            outer.append(vert)
+
+    bmesh.ops.delete(bm, geom = outer[:], context = 1)
+    
+    bm.to_mesh(me)
+    
+    
+    # translate
+    r = 0 if i == 0 else 1
+
+    if i == 0:
+        pos = (0, 0, 10 * -r)
+
+    if i == 1:
+        pos = (6, 0, 10 * -r)
+
+    if i == 2:
+        pos = (0, -6, 10 * -r)
+
+    if i == 3:
+        pos = (-6, 0, 10 * -r)
+
+    if i == 4:
+        pos = (0, 6, 10 * -r)
+    
+    bpy.context.active_object.matrix_world *= Matrix.Rotation(radians(90) * r, 4, 'Y')
+    bpy.context.active_object.matrix_world *= Matrix.Rotation(radians(90) * (i - 1) * r, 4, 'X')
+    bpy.context.active_object.location = pos
+
+    bm.to_mesh(me)
+
+    
+def create_inner():
+    for _ in range(1, 5):
+        create_inner_plane(_)
+        
+    
+    # ring
+    # init
+    bpy.ops.mesh.primitive_grid_add(x_subdivisions = 17, y_subdivisions = 17, radius = 8, location = (0, 0, -16))
+
+    ob = bpy.context.object 
+    me = ob.data
+
+    bm = bmesh.new()
+    bm.from_mesh(me)
+    
+    # apply material
+    bpy.ops.object.mode_set(mode = 'EDIT')
+
+    bpy.ops.uv.unwrap()
+    bpy.data.screens['UV Editing'].areas[1].spaces[0].image = bpy.data.images['diamond_ore.png'] # texture must be applied in edit mode
+       
+    # rotate, currently off kilter by 90 deg
+    prev_area = bpy.context.area.type
+    bpy.context.area.type = 'IMAGE_EDITOR'
+
+    bpy.ops.transform.rotate(value = radians(90))
+
+    bpy.context.area.type = prev_area
+
+    bpy.ops.object.mode_set(mode = 'OBJECT')
+    
+
+    # remove
+    bm = bmesh.new()
+    bm.from_mesh(me)
+    
+    inner = []
+    
+    for vert in bm.verts:
+        if vert.co.x > -6 and vert.co.x < 6 and vert.co.y > -6 and vert.co.y < 6:
+            inner.append(vert)
+
+    bmesh.ops.delete(bm, geom = inner[:], context = 1)
+    
+    bm.to_mesh(me)
     
 
 create_cube()
+create_inner()
