@@ -117,6 +117,17 @@ def create_inner_plane(i):
     me = ob.data
 
 
+    # extrude
+    detail = bmesh.new()
+    detail.from_mesh(me)
+
+    for f, face in enumerate(detail.faces[:]):
+        r = bmesh.ops.extrude_discrete_faces(detail, faces = [face])
+        bmesh.ops.translate(detail, vec = (0, 0, (val[f] - floor) / 400), verts = r['faces'][0].verts)
+
+    detail.to_mesh(me)
+
+
     # remove
     bm = bmesh.new()
     bm.from_mesh(me)
@@ -151,7 +162,7 @@ def create_inner_plane(i):
         pos = (0, 6, 10 * -r)
 
     bpy.context.active_object.matrix_world *= Matrix.Rotation(radians(90) * r, 4, 'Y')
-    bpy.context.active_object.matrix_world *= Matrix.Rotation(radians(90) * (i - 1) * r, 4, 'X')
+    bpy.context.active_object.matrix_world *= Matrix.Rotation(radians(90) * (i + 1) * r, 4, 'X')
     bpy.context.active_object.location = pos
 
     bm.to_mesh(me)
@@ -214,6 +225,7 @@ def create_inner():
     bm = bmesh.new()
     bm.from_mesh(me)
 
+
     # apply material
     bpy.ops.object.mode_set(mode = 'EDIT')
 
@@ -229,6 +241,17 @@ def create_inner():
     bpy.context.area.type = prev_area
 
     bpy.ops.object.mode_set(mode = 'OBJECT')
+
+
+    # extrude
+    detail = bmesh.new()
+    detail.from_mesh(me)
+
+    for f, face in enumerate(detail.faces[:]):
+        r = bmesh.ops.extrude_discrete_faces(detail, faces = [face])
+        bmesh.ops.translate(detail, vec = (0, 0, -(val[f] - floor) / 400), verts = r['faces'][0].verts)
+
+    detail.to_mesh(me)
 
 
     # remove
