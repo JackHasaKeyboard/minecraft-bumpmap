@@ -7,7 +7,7 @@ from math import cos, sin, radians
 from PIL import Image
 
 # color data
-tex = Image.open('/home/jackhasakeyboard/py/minecraft-bumpmap/o/diamond_ore.png')
+tex = Image.open('/home/jackhasakeyboard/py/minecraft_bumpmap/o/diamond_ore.png')
     
 val = []
 floor = 255
