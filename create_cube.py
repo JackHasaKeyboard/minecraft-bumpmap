@@ -6,8 +6,11 @@ from math import cos, sin, radians
 
 from PIL import Image
 
+
+name = 'diamond_ore'
+
 # color data
-tex = Image.open('/home/jackhasakeyboard/py/minecraft_bumpmap/o/diamond_ore.png')
+tex = Image.open('/home/jackhasakeyboard/py/minecraft_bumpmap/i/blocks/%s.png' % name)
 
 val = []
 floor = 255
@@ -34,7 +37,7 @@ def create_plane(i):
 
     # apply_texture
     bpy.ops.uv.unwrap()
-    bpy.data.screens['UV Editing'].areas[1].spaces[0].image = bpy.data.images['diamond_ore.png'] # texture must be applied in edit mode
+    bpy.data.screens['UV Editing'].areas[1].spaces[0].image = bpy.data.images['%s.png' % name] # texture must be applied in edit mode
 
     # rotate, currently off kilter by 90 deg
     prev_area = bpy.context.area.type
@@ -101,7 +104,7 @@ def create_inner_plane(i):
     bpy.ops.object.mode_set(mode = 'EDIT')
 
     bpy.ops.uv.unwrap()
-    bpy.data.screens['UV Editing'].areas[1].spaces[0].image = bpy.data.images['diamond_ore.png'] # texture must be applied in edit mode
+    bpy.data.screens['UV Editing'].areas[1].spaces[0].image = bpy.data.images['%s.png' % name] # texture must be applied in edit mode
 
     # rotate, currently off kilter by 90 deg
     prev_area = bpy.context.area.type
@@ -135,7 +138,7 @@ def create_inner_plane(i):
     outer = []
 
     for vert in bm.verts:
-        if not(vert.co.x > -9 and vert.co.x < 7 and vert.co.y > -7 and vert.co.y < 7):
+        if not(vert.co.x > -7 and vert.co.x < 9 and vert.co.y > -7 and vert.co.y < 7):
             outer.append(vert)
 
     bmesh.ops.delete(bm, geom = outer[:], context = 1)
@@ -147,19 +150,19 @@ def create_inner_plane(i):
     r = 0 if i == 0 else 1
 
     if i == 0:
-        pos = (0, 0, 10 * -r)
+        pos = (0, 0, 8 * -r)
 
     if i == 1:
-        pos = (6, 0, 10 * -r)
+        pos = (6, 0, 8 * -r)
 
     if i == 2:
-        pos = (0, -6, 10 * -r)
+        pos = (0, -6, 8 * -r)
 
     if i == 3:
-        pos = (-6, 0, 10 * -r)
+        pos = (-6, 0, 8 * -r)
 
     if i == 4:
-        pos = (0, 6, 10 * -r)
+        pos = (0, 6, 8 * -r)
 
     bpy.context.active_object.matrix_world *= Matrix.Rotation(radians(90) * r, 4, 'Y')
     bpy.context.active_object.matrix_world *= Matrix.Rotation(radians(90) * (i + 1) * r, 4, 'X')
@@ -187,7 +190,7 @@ def create_inner():
     bpy.ops.object.mode_set(mode = 'EDIT')
 
     bpy.ops.uv.unwrap()
-    bpy.data.screens['UV Editing'].areas[1].spaces[0].image = bpy.data.images['diamond_ore.png'] # texture must be applied in edit mode
+    bpy.data.screens['UV Editing'].areas[1].spaces[0].image = bpy.data.images['%s.png' % name] # texture must be applied in edit mode
 
     # rotate, currently off kilter by 90 deg
     prev_area = bpy.context.area.type
@@ -230,7 +233,7 @@ def create_inner():
     bpy.ops.object.mode_set(mode = 'EDIT')
 
     bpy.ops.uv.unwrap()
-    bpy.data.screens['UV Editing'].areas[1].spaces[0].image = bpy.data.images['diamond_ore.png'] # texture must be applied in edit mode
+    bpy.data.screens['UV Editing'].areas[1].spaces[0].image = bpy.data.images['%s.png' % name] # texture must be applied in edit mode
 
     # rotate, currently off kilter by 90 deg
     prev_area = bpy.context.area.type
