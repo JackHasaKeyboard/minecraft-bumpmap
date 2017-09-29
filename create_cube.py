@@ -294,6 +294,13 @@ def create_block(name):
 
     create_outer()
     create_inner()
+    
+
+    # resize, Shapeways dimensions are in mm
+    for ob in bpy.context.scene.objects:
+        ob.select = True
+        
+    bpy.ops.transform.resize(value = (2, 2 , 2))
 
 
     # export
@@ -309,3 +316,5 @@ for f in glob('/home/jackhasakeyboard/py/minecraft_bumpmap/i/blocks/*.png')[:]:
     name = os.path.splitext(os.path.basename(f))[0]
   
     create_block(name)
+
+create_block('diamond_ore')
