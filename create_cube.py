@@ -6,6 +6,8 @@ from math import cos, sin, radians
 
 from PIL import Image
 
+import subprocess
+
 
 name = 'diamond_ore'
 
@@ -23,6 +25,16 @@ for x in range(tex.size[0]):
 
         if (col < floor):
             floor = col
+      
+
+# resize texture
+subprocess.call(['mkdir', '/home/jackhasakeyboard/py/minecraft_bumpmap/o/%s' % name])
+subprocess.call(['convert', '/home/jackhasakeyboard/py/minecraft_bumpmap/i/blocks/%s.png' % name, '-scale', '10000%', '/home/jackhasakeyboard/py/minecraft_bumpmap/o/%s/%s.png' % (name, name)])
+
+
+# load texture
+img = bpy.data.images.load('/home/jackhasakeyboard/py/minecraft_bumpmap/o/%s/%s.png' % (name, name))
+
 
 def create_plane(i):
     # init
@@ -31,12 +43,13 @@ def create_plane(i):
     ob = bpy.context.object
     me = ob.data
 
+    # apply_texture
     bpy.ops.object.mode_set(mode = 'EDIT')
 
     bm = bmesh.from_edit_mesh(me)
 
-    # apply_texture
     bpy.ops.uv.unwrap()
+    
     bpy.data.screens['UV Editing'].areas[1].spaces[0].image = bpy.data.images['%s.png' % name] # texture must be applied in edit mode
 
     # rotate, currently off kilter by 90 deg
@@ -274,3 +287,11 @@ def create_inner():
 
 create_cube()
 create_inner()
+
+
+# export
+bpy.ops.export_scene.x3d(filepath = '/home/jackhasakeyboard/py/minecraft_bumpmap/o/%s/%s.x3d' % (name, name), axis_up = 'Y')
+
+      
+# zip
+subprocess.call(['zip', '-j', '/home/jackhasakeyboard/py/minecraft_bumpmap/o/%s/%s.zip' % (name, name), '/home/jackhasakeyboard/py/minecraft_bumpmap/o/%s/%s.x3d' % (name, name), '/home/jackhasakeyboard/py/minecraft_bumpmap/o/%s/%s.png' % (name, name)]) # j flag (junk the absolute path and just use the names) required for Shapeways to be happy for some reason
