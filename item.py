@@ -6,14 +6,16 @@ from math import cos, sin, radians
 from PIL import Image
 
 
+cwd = bpy.path.abspath('//')
+
 name = 'diamond'
 
 # load texture
-img = bpy.data.images.load('/home/jackhasakeyboard/py/minecraft_bumpmap/i/items/%s.png' % name)
+img = bpy.data.images.load('%s/i/items/%s.png' % (cwd, name))
 
 
 # color data
-tex = Image.open('/home/jackhasakeyboard/py/minecraft_bumpmap/i/items/%s.png' % name)
+tex = Image.open('%s/i/items/%s.png' % (cwd, name))
     
 
 # create

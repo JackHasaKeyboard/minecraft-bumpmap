@@ -12,6 +12,8 @@ import os
 from glob import glob
 
 
+cwd = bpy.path.abspath('//')
+
 def create_block(name):
     for ob in bpy.context.scene.objects:
         ob.select = True
@@ -19,7 +21,7 @@ def create_block(name):
     bpy.ops.object.delete()
   
     # color data
-    tex = Image.open('/home/jackhasakeyboard/py/minecraft_bumpmap/i/blocks/%s.png' % name)
+    tex = Image.open('%s/i/blocks/%s.png' % (cwd, name))
 
     val = []
     floor = 255
@@ -35,12 +37,12 @@ def create_block(name):
           
 
     # resize texture
-    subprocess.call(['mkdir', '/home/jackhasakeyboard/py/minecraft_bumpmap/o/%s' % name])
-    subprocess.call(['convert', '/home/jackhasakeyboard/py/minecraft_bumpmap/i/blocks/%s.png' % name, '-scale', '10000%', '/home/jackhasakeyboard/py/minecraft_bumpmap/o/%s/%s.png' % (name, name)])
+    subprocess.call(['mkdir', '%s/o/%s' % (cwd, name)])
+    subprocess.call(['convert', '%s/i/blocks/%s.png' % (cwd, name), '-scale', '10000%', '%s/o/%s/%s.png' % (cwd, name, name)])
 
 
     # load texture
-    img = bpy.data.images.load('/home/jackhasakeyboard/py/minecraft_bumpmap/o/%s/%s.png' % (name, name))
+    img = bpy.data.images.load('%s/o/%s/%s.png' % (cwd, name, name))
 
 
     def create_plane(i):
@@ -295,7 +297,7 @@ def create_block(name):
     create_outer()
     create_inner()
     
-
+    
     # resize, Shapeways dimensions are in mm
     for ob in bpy.context.scene.objects:
         ob.select = True
@@ -304,17 +306,15 @@ def create_block(name):
 
 
     # export
-    bpy.ops.export_scene.x3d(filepath = '/home/jackhasakeyboard/py/minecraft_bumpmap/o/%s/%s.x3d' % (name, name), axis_up = 'Y')
+    bpy.ops.export_scene.x3d(filepath = '%s/o/%s/%s.x3d' % (cwd, name, name), axis_up = 'Y')
 
           
     # zip
-    subprocess.call(['zip', '-j', '/home/jackhasakeyboard/py/minecraft_bumpmap/o/%s/%s.zip' % (name, name), '/home/jackhasakeyboard/py/minecraft_bumpmap/o/%s/%s.x3d' % (name, name), '/home/jackhasakeyboard/py/minecraft_bumpmap/o/%s/%s.png' % (name, name)]) # j flag (junk the absolute path and just use the names) required for Shapeways to be happy for some reason
+    subprocess.call(['zip', '-j', '%s/o/%s/%s.zip' % (cwd, name, name), '%s/o/%s/%s.x3d' % (cwd, name, name), '%s/o/%s/%s.png' % (cwd, name, name)]) # j flag (junk the absolute path and just use the names) required for Shapeways to be happy for some reason
 
 
 # mass export
-for f in glob('/home/jackhasakeyboard/py/minecraft_bumpmap/i/blocks/*.png')[:]:
+for f in glob('%s/i/blocks/*.png' % cwd)[:]:
     name = os.path.splitext(os.path.basename(f))[0]
   
     create_block(name)
-
-create_block('diamond_ore')
