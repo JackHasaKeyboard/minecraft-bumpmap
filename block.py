@@ -15,10 +15,12 @@ from glob import glob
 cwd = bpy.path.abspath('//')
 
 def create_block(name):
+    # clear
     for ob in bpy.context.scene.objects:
         ob.select = True
 
     bpy.ops.object.delete()
+
   
     # color data
     tex = Image.open('%s/i/blocks/%s.png' % (cwd, name))
